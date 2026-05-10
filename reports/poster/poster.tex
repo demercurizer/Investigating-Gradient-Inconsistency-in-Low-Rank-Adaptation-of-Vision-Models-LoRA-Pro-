@@ -12,7 +12,7 @@
 \usepackage{xcolor}
 \usepackage{ragged2e}
 \usepackage{tikz}
-\usetikzlibrary{positioning}
+\usetikzlibrary{arrows.meta,positioning}
 
 \usetheme{default}
 \setbeamertemplate{navigation symbols}{}
@@ -25,6 +25,9 @@
 \definecolor{textgray}{RGB}{45,50,58}
 \definecolor{mutedgray}{RGB}{104,112,122}
 \definecolor{panelgray}{RGB}{246,248,250}
+\definecolor{peftblue}{RGB}{20,96,170}
+\definecolor{doragreen}{RGB}{34,132,84}
+\definecolor{proorange}{RGB}{202,98,28}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.35em}
@@ -130,9 +133,8 @@ pretrained backbone.
         fill=white
     },
     arrow/.style={
-        ->,
-        line width=1.5pt,
-        draw=titleblue
+        -{Latex[length=5mm,width=3.2mm]},
+        line width=2.8pt
     }
 ]
 
@@ -156,9 +158,9 @@ pretrained backbone.
     gradient correction
 };
 
-\draw[arrow] (full) -- node[right, text=mutedgray] {cheaper PEFT} (lora);
-\draw[arrow] (lora) -- node[left, text=mutedgray] {parameterization} (dora);
-\draw[arrow] (lora) -- node[right, text=mutedgray] {optimization} (lorapro);
+\draw[arrow, draw=peftblue] (full) -- node[right, text=peftblue, font=\large\bfseries] {cheaper PEFT} (lora);
+\draw[arrow, draw=doragreen] (lora) -- node[left, text=doragreen, font=\large\bfseries] {parameterization} (dora);
+\draw[arrow, draw=proorange] (lora) -- node[right, text=proorange, font=\large\bfseries] {optimization} (lorapro);
 
 \end{tikzpicture}
 \end{center}
