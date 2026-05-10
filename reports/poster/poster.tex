@@ -106,6 +106,16 @@ LoRA freezes $W_0$ and trains only $A$ and $B$. This reduces the number of
 trainable parameters from $dk$ to $r(d+k)$ while preserving the original
 pretrained backbone.
 
+In CLIP-ViT, adapters are inserted into attention projection matrices, primarily
+\code{q\_proj} and \code{v\_proj}. The original projection
+\[
+  h = W_0x
+\]
+is replaced by
+\[
+  h = W_0x + sBAx.
+\]
+
 \sectiontitle{Figure 1. Method Landscape}
 
 \begin{center}
@@ -192,14 +202,14 @@ the full fine-tuning gradient:
 
 \sectiontitle{5. Method Comparison}
 \begin{center}
-\begin{tabular}{>{\bfseries}p{0.26\linewidth}p{0.62\linewidth}}
+\begin{tabular}{>{\bfseries}p{0.22\linewidth}p{0.66\linewidth}}
 \toprule
 Method & Adaptation strategy \\
 \midrule
 Zero-shot & No training; compare image and text embeddings. \\
 Linear probe & Freeze CLIP visual encoder; train classifier head. \\
 LoRA & Train low-rank adapters in attention projections. \\
-DoRA & Separate weight magnitude and direction updates. \\
+DoRA & Decompose weights into magnitude and direction; apply LoRA-style updates to direction. \\
 LoRA-Pro & Correct low-rank gradients to reduce mismatch. \\
 \bottomrule
 \end{tabular}
