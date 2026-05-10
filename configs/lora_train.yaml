@@ -1,0 +1,42 @@
+experiment:
+  name: lora_eurosat_r8
+  seed: 42
+  dry_run: false
+
+paths:
+  data_dir: /workspace/data
+  output_dir: /workspace/checkpoints/lora_eurosat_r8
+  log_dir: /workspace/logs
+
+model:
+  pretrained_model_name_or_path: openai/clip-vit-base-patch16
+  method: lora
+  rank: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - v_proj
+
+data:
+  dataset: timm/eurosat-rgb
+  train_split: train
+  val_split: validation
+  image_size: 224
+  batch_size: 64
+  num_workers: 4
+
+training:
+  epochs: 5
+  lr: 1.0e-4
+  weight_decay: 0.01
+  optimizer: adamw
+  mixed_precision: bf16
+  max_train_batches:
+  max_val_batches:
+
+dry_run:
+  enabled: false
+  max_train_batches: 2
+  max_val_batches: 2
+  num_workers: 0

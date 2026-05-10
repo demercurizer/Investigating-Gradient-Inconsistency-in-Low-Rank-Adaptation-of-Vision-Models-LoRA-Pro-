@@ -3,6 +3,9 @@ torchvision
 transformers
 datasets
 accelerate
+peft
+evaluate
+timm
 numpy
 pandas
 scipy
@@ -10,4 +13,5 @@ scikit-learn
 matplotlib
 pyyaml
 tqdm
+rich
 wandb

@@ -1,0 +1,25 @@
+experiment:
+  name: baseline_zero_shot_eurosat
+  seed: 42
+  dry_run: false
+
+paths:
+  data_dir: /workspace/data
+  output_dir: /workspace/checkpoints/baseline_zero_shot_eurosat
+  log_dir: /workspace/logs
+
+model:
+  pretrained_model_name_or_path: openai/clip-vit-base-patch16
+  method: zero_shot
+
+data:
+  dataset: timm/eurosat-rgb
+  split: test
+  image_size: 224
+  batch_size: 128
+  num_workers: 4
+
+dry_run:
+  enabled: false
+  max_eval_batches: 2
+  num_workers: 0
