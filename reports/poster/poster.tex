@@ -12,6 +12,7 @@
 \usepackage{xcolor}
 \usepackage{ragged2e}
 \usepackage{tikz}
+\usetikzlibrary{positioning}
 
 \usetheme{default}
 \setbeamertemplate{navigation symbols}{}
@@ -103,8 +104,63 @@ trainable parameters from $dk$ to $r(d+k)$ while preserving the original
 pretrained backbone.
 
 \sectiontitle{Figure 1. Method Landscape}
-\figureplaceholder{Placeholder for method diagram\\Full FT / LoRA / DoRA / LoRA-Pro}
 
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1.25cm,
+    box/.style={
+        rectangle,
+        draw=titleblue,
+        line width=1pt,
+        rounded corners=4pt,
+        align=center,
+        minimum width=6.3cm,
+        minimum height=1.25cm,
+        fill=white
+    },
+    smallbox/.style={
+        rectangle,
+        draw=rulegray,
+        line width=0.9pt,
+        rounded corners=4pt,
+        align=center,
+        minimum width=5.7cm,
+        minimum height=1.15cm,
+        fill=white
+    },
+    arrow/.style={
+        ->,
+        line width=1pt,
+        draw=titleblue
+    }
+]
+
+\node[box] (full) {
+    \textbf{Full Fine-Tuning}\\
+    {\small train all backbone weights}
+};
+
+\node[box, below=of full] (lora) {
+    \textbf{LoRA}\\
+    {\small low-rank update $W=W_0+sBA$}
+};
+
+\node[smallbox, below left=1.25cm and 0.65cm of lora] (dora) {
+    \textbf{DoRA}\\
+    {\small magnitude / direction}
+};
+
+\node[smallbox, below right=1.25cm and 0.65cm of lora] (lorapro) {
+    \textbf{LoRA-Pro}\\
+    {\small gradient correction}
+};
+
+\draw[arrow] (full) -- node[right, text=mutedgray] {\small cheaper PEFT} (lora);
+\draw[arrow] (lora) -- node[left, text=mutedgray] {\small parameterization} (dora);
+\draw[arrow] (lora) -- node[right, text=mutedgray] {\small optimization} (lorapro);
+
+\end{tikzpicture}
+\end{center}
 \end{column}
 
 \begin{column}{0.315\textwidth}
