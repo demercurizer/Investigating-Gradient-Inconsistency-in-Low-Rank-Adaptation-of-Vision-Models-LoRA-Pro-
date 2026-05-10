@@ -1,0 +1,13 @@
+torch
+torchvision
+transformers
+datasets
+accelerate
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+pyyaml
+tqdm
+wandb

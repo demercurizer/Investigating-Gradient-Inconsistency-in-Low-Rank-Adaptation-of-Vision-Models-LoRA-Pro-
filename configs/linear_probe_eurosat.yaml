@@ -1,0 +1,6 @@
+dataset:
+  name: eurosat
+model:
+  name: openai/clip-vit-base-patch16
+training:
+  mode: linear_probe

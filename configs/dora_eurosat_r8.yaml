@@ -1,0 +1,7 @@
+dataset:
+  name: eurosat
+model:
+  name: openai/clip-vit-base-patch16
+method:
+  name: dora
+  rank: 8

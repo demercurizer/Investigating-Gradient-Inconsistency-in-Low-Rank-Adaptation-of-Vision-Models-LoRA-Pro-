@@ -1,0 +1,1 @@
+"""CLIP model construction utilities."""

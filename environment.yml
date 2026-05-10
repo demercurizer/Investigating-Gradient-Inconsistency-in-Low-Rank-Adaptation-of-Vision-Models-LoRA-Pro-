@@ -1,0 +1,21 @@
+name: lorapro-vit
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - pyyaml
+  - tqdm
+  - pip:
+      - torch
+      - torchvision
+      - transformers
+      - datasets
+      - accelerate
+      - wandb
