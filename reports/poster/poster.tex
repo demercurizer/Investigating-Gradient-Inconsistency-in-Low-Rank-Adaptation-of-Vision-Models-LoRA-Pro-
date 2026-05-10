@@ -256,12 +256,12 @@ the full fine-tuning gradient:
 \begin{center}
 \begin{tikzpicture}[
     >=Latex,
-    scale=2,
+    scale=1.55,
     transform shape,
-    font=\normalsize,
+    font=\small,
     vector/.style={
         ->,
-        line width=1.45pt
+        line width=1.25pt
     },
     fullgrad/.style={
         vector,
@@ -272,69 +272,78 @@ the full fine-tuning gradient:
         draw=mutedgray,
         dashed
     },
-    progr/.style={
+    prograd/.style={
         vector,
         draw=orange!85!black
     },
-    subspace/.style={
-        draw=rulegray,
-        line width=1pt,
-        fill=panelgray,
-        opacity=0.65
+    mismatch/.style={
+        <->,
+        line width=0.9pt
     }
 ]
 
-\draw[subspace] (0,0) ellipse (5.5cm and 1.35cm);
-\node[text=mutedgray] at (0,-1.95) {low-rank tangent subspace};
+\draw[
+    draw=rulegray,
+    fill=panelgray,
+    line width=0.8pt,
+    opacity=0.75
+] (0,0) ellipse (5.2cm and 1.25cm);
 
-\coordinate (o) at (-4.45,-0.35);
+\node[text=mutedgray] at (0,-1.75) {low-rank equivalent-gradient family};
 
-\draw[fullgrad] (o) -- ++(4.10,4.23)
-    node[pos=0.76, left, text=titleblue] {$g$};
+\coordinate (o) at (-4.2,-0.25);
+\coordinate (g) at (-0.8,3.35);
+\coordinate (glora) at (2.3,0.10);
+\coordinate (gpro) at (0.85,0.95);
 
-\draw[loragrad] (o) -- ++(8.39,0.59)
-    node[pos=0.84, below, text=mutedgray] {$\widetilde g_{\mathrm{LoRA}}$};
+\draw[fullgrad] (o) -- (g)
+    node[pos=0.63, left, text=titleblue] {$g=\partial\mathcal{L}/\partial W$};
 
-\draw[progr] (o) -- ++(6.83,2.02)
-    node[pos=0.86, above right, text=orange!85!black] {$\widetilde g_{\mathrm{Pro}}$};
+\draw[loragrad] (o) -- (glora)
+    node[pos=0.82, below, text=mutedgray] {$\widetilde g_{\mathrm{LoRA}}$};
 
-\draw[<->, draw=mutedgray, line width=0.45pt]
-    ($(o)+(4.10,4.23)$) -- ($(o)+(8.39,0.59)$)
-    node[midway, right, text=mutedgray] {\scriptsize mismatch};
+\draw[prograd] (o) -- (gpro)
+    node[pos=0.84, above, text=orange!85!black] {$\widetilde g_{\mathrm{Pro}}$};
 
-\draw[<->, draw=orange!85!black, line width=0.45pt]
-    ($(o)+(4.10,4.23)$) -- ($(o)+(6.83,2.02)$)
-    node[midway, left, text=orange!85!black] {\scriptsize reduced};
+\draw[mismatch, draw=mutedgray]
+    (g) -- (glora)
+    node[midway, right, text=mutedgray] {\scriptsize larger mismatch};
+
+\draw[mismatch, draw=orange!85!black]
+    (g) -- (gpro)
+    node[midway, left, text=orange!85!black] {\scriptsize reduced mismatch};
 
 \node[
     rectangle,
-    rounded corners=5pt,
+    rounded corners=4pt,
     draw=orange!85!black,
-    fill=orange!10,
-    line width=1pt,
+    fill=orange!8,
+    line width=0.9pt,
     align=center,
-    minimum width=5.2cm,
+    minimum width=5.5cm,
     minimum height=1.05cm
-] at (6.0,2.55)
+] at (3.3,2.8)
 {
     \(\displaystyle
-    \min_{g_A,g_B}\|\widetilde g-g\|_F^2
+    \min_{g_A,g_B}
+    \|sBg_A + sg_BA - g\|_F^2
     \)
 };
 
-\node[align=left, text=mutedgray, font=\small] at (1.6,-4.05) {
-    \textcolor{titleblue}{solid blue}: full fine-tuning gradient\\
-    \textcolor{mutedgray}{dashed gray}: standard LoRA equivalent gradient\\
-    \textcolor{orange!85!black}{orange}: LoRA-Pro corrected gradient
+\node[align=left, text=mutedgray] at (2.4,-1.05) {
+    \textcolor{titleblue}{blue}: full fine-tuning gradient\\
+    \textcolor{mutedgray}{gray dashed}: standard LoRA equivalent gradient\\
+    \textcolor{orange!85!black}{orange}: LoRA-Pro corrected equivalent gradient
 };
 
 \end{tikzpicture}
 \end{center}
 
 {\small
-LoRA induces an equivalent low-rank gradient \(\widetilde g\), which may differ
-from the full gradient \(g\). LoRA-Pro adjusts \(g_A\) and \(g_B\) so that
-\(\widetilde g\) becomes closer to \(g\) in Frobenius norm.
+LoRA induces an equivalent low-rank gradient \(\widetilde g_{\mathrm{LoRA}}\),
+which may differ from the full fine-tuning gradient \(g\). LoRA-Pro adjusts
+\(g_A\) and \(g_B\) so that \(\widetilde g=sBg_A+sg_BA\) becomes closer to
+\(g\) in Frobenius norm.
 }
 
 \sectiontitle{5. Method Comparison}
