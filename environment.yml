@@ -1,21 +1,25 @@
 name: lorapro-vit
 channels:
   - pytorch
+  - nvidia
   - conda-forge
 dependencies:
-  - python=3.11
+  - python=3.10
   - pip
+  - pytorch
+  - torchvision
+  - pytorch-cuda=12.1
   - numpy
   - pandas
-  - scipy
-  - scikit-learn
   - matplotlib
-  - pyyaml
+  - scikit-learn
   - tqdm
+  - pyyaml
   - pip:
-      - torch
-      - torchvision
       - transformers
       - datasets
       - accelerate
-      - wandb
+      - peft
+      - evaluate
+      - timm
+      - rich
