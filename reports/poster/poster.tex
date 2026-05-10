@@ -256,7 +256,7 @@ the full fine-tuning gradient:
 \begin{center}
 \begin{tikzpicture}[
     >=Latex,
-    scale=2,
+    scale=1.5,
     transform shape,
     font=\small,
     vector/.style={
@@ -294,16 +294,15 @@ the full fine-tuning gradient:
     opacity=0.75
 ] (0,0) ellipse (5.2cm and 1.25cm);
 
-\node[text=mutedgray] at (0,-1.75) {reachable equivalent gradients};
 
 \coordinate (o) at (-4.35,-0.35);
-\coordinate (gaend) at (-3.35,0.38);
+\coordinate (gaend) at (-3.75,0.68);
 \coordinate (gbend) at (1.25,-0.3);
 \coordinate (sum) at ($(gaend)+(gbend)-(o)$);
-\coordinate (g) at ($(sum)+(0,2.55)$);
+\coordinate (g) at ($(sum)+(-0.5,4.55)$);
 
 \draw[ga] (o) -- (gaend)
-    node[pos=0.54, above, text=titleblue] {$sBg_A$};
+    node[pos=0.54, left, text=titleblue] {$sBg_A$};
 
 \draw[gb] (o) -- (gbend)
     node[pos=0.58, below, text=orange!85!black] {$sg_BA$};
@@ -314,7 +313,7 @@ the full fine-tuning gradient:
 \fill[mutedgray] (sum) circle (1.5pt);
 
 \draw[fullgrad] (o) -- (g)
-    node[pos=0.63, right, text=doragreen] {$g=\partial\mathcal{L}/\partial W$};
+    node[pos=0.53, left, text=doragreen] {$g=\partial\mathcal{L}/\partial W$};
 
 \draw[mismatch, draw=mutedgray] (sum) -- (g)
     node[pos=0.45, left, text=mutedgray] {\scriptsize mismatch};
@@ -328,7 +327,7 @@ the full fine-tuning gradient:
     align=center,
     minimum width=5.5cm,
     minimum height=1.05cm
-] at (-4.15,3.05)
+] at (7.15,3.05)
 {
     {\scriptsize LoRA-Pro gradient correction}\\[-0.15em]
     \(\displaystyle
@@ -420,10 +419,10 @@ trainable parameter and the gap to full fine-tuning.
 
 \sectiontitle{9. Publication Plan and Conclusion}
 \begin{itemize}
-  \item May 2026: poster draft and preliminary EuroSAT experiments.
-  \item June 2026: complete LoRA / DoRA / LoRA-Pro comparison.
-  \item July 2026: prepare reproducible technical report.
-  \item August 2026: publish report and code on GitHub or a project page.
+  \item Mid-May 2026: poster draft and preliminary EuroSAT baselines.
+  \item Late May 2026: complete EuroSAT and CIFAR-100 runs for LoRA, DoRA, and LoRA-Pro.
+  \item Early June 2026: finalize the report with reproducible code, configs, and result analysis.
+  \item June 2026: publish the final materials on GitHub or a small project page.
 \end{itemize}
 
 This project tests whether gradient mismatch is a practical bottleneck for
