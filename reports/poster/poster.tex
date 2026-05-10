@@ -256,7 +256,7 @@ the full fine-tuning gradient:
 \begin{center}
 \begin{tikzpicture}[
     >=Latex,
-    scale=1.55,
+    scale=3,
     transform shape,
     font=\small,
     vector/.style={
@@ -293,18 +293,19 @@ the full fine-tuning gradient:
     opacity=0.75
 ] (0,0) ellipse (5.2cm and 1.25cm);
 
-\node[text=mutedgray] at (0,-2.15) {low-rank equivalent-gradient family};
+\node[text=mutedgray] at (0,-1.65) {low-rank equivalent-gradient family};
 
 \coordinate (o) at (-4.35,-0.35);
-\coordinate (gaend) at (-1.35,0.38);
-\coordinate (sum) at (2.25,0.70);
-\coordinate (g) at (2.25,3.25);
+\coordinate (gaend) at (-3.35,0.38);
+\coordinate (gbend) at (-4.35,-0.03);
+\coordinate (sum) at ($(gaend)+(gbend)-(o)$);
+\coordinate (g) at ($(sum)+(0,2.55)$);
 
 \draw[ga] (o) -- (gaend)
     node[pos=0.54, above, text=titleblue] {$sBg_A$};
 
 \draw[gb] (gaend) -- (sum)
-    node[pos=0.55, above, text=orange!85!black] {$sg_BA$};
+    node[pos=0.35, above, text=orange!85!black] {$sg_BA$};
 
 \draw[sumgrad] (o) -- (sum)
     node[pos=0.78, below, text=mutedgray] {$\widetilde g=sBg_A+sg_BA$};
