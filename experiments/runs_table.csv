@@ -1,1 +1,4 @@
-run_id,date,config,status,notes
+run_id,method,dataset,model,rank,target_modules,epochs,accuracy,trainable_params,total_params,train_time_min,peak_memory_gb,config,notes
+001,zero-shot,EuroSAT,CLIP-ViT-B/16,,,,,,,,,configs/zero_shot_eurosat.yaml,
+002,linear-probe,EuroSAT,CLIP-ViT-B/16,,,,,,,,,configs/linear_probe_eurosat.yaml,
+003,lora,EuroSAT,CLIP-ViT-B/16,8,"q_proj,v_proj",5,,,,,,configs/lora_eurosat_r8.yaml,
