@@ -256,6 +256,8 @@ the full fine-tuning gradient:
 \begin{center}
 \begin{tikzpicture}[
     >=Latex,
+    scale=1.5,
+    transform shape,
     font=\normalsize,
     vector/.style={
         ->,
@@ -320,7 +322,7 @@ the full fine-tuning gradient:
     \)
 };
 
-\node[align=left, text=mutedgray, font=\small] at (1.6,-3.0) {
+\node[align=left, text=mutedgray, font=\small] at (1.6,-4.05) {
     \textcolor{titleblue}{solid blue}: full fine-tuning gradient\\
     \textcolor{mutedgray}{dashed gray}: standard LoRA equivalent gradient\\
     \textcolor{orange!85!black}{orange}: LoRA-Pro corrected gradient
