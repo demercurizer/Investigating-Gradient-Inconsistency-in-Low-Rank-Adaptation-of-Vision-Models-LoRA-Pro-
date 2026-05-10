@@ -199,11 +199,11 @@ is replaced by
 };
 
 \draw[arrow] (x) -- (w0);
-\draw[arrow] (w0) -- node[above left, text=mutedgray, pos=0.55] {$W_0x$} (sum);
+\draw[arrow] (w0) -- node[above left, text=mutedgray, pos=0.45] {$W_0x$} (sum);
 
 \draw[loraarrow] (x) -- (A);
 \draw[loraarrow] (A) -- node[right, text=mutedgray, pos=0.5] {$Ax$} (B);
-\draw[loraarrow] (B) -- node[above right, text=mutedgray, pos=0.55] {$sBAx$} (sum);
+\draw[loraarrow] (B) -- node[above right, text=mutedgray, pos=0.45] {$sBAx$} (sum);
 
 \draw[arrow] (sum) -- (h);
 
@@ -251,6 +251,90 @@ the full fine-tuning gradient:
   \right\|_F^2.
 \]
 
+\sectiontitle{Figure 2. Gradient Mismatch Intuition}
+
+\begin{center}
+\begin{tikzpicture}[
+    >=Latex,
+    font=\normalsize,
+    vector/.style={
+        ->,
+        line width=1.45pt
+    },
+    fullgrad/.style={
+        vector,
+        draw=titleblue
+    },
+    loragrad/.style={
+        vector,
+        draw=mutedgray,
+        dashed
+    },
+    progr/.style={
+        vector,
+        draw=orange!85!black
+    },
+    subspace/.style={
+        draw=rulegray,
+        line width=1pt,
+        fill=panelgray,
+        opacity=0.65
+    }
+]
+
+\draw[subspace] (0,0) ellipse (5.5cm and 1.35cm);
+\node[text=mutedgray] at (0,-1.95) {low-rank tangent subspace};
+
+\coordinate (o) at (-4.45,-0.35);
+
+\draw[fullgrad] (o) -- ++(3.15,3.25)
+    node[pos=0.76, left, text=titleblue] {$g$};
+
+\draw[loragrad] (o) -- ++(6.45,0.85)
+    node[pos=0.84, below, text=mutedgray] {$\widetilde g_{\mathrm{LoRA}}$};
+
+\draw[progr] (o) -- ++(5.25,1.55)
+    node[pos=0.86, above right, text=orange!85!black] {$\widetilde g_{\mathrm{Pro}}$};
+
+\draw[<->, draw=mutedgray, line width=0.85pt]
+    ($(o)+(3.15,3.25)$) -- ($(o)+(6.45,0.85)$)
+    node[midway, right, text=mutedgray] {\scriptsize mismatch};
+
+\draw[<->, draw=orange!85!black, line width=0.85pt]
+    ($(o)+(3.15,3.25)$) -- ($(o)+(5.25,1.55)$)
+    node[midway, left, text=orange!85!black] {\scriptsize reduced};
+
+\node[
+    rectangle,
+    rounded corners=5pt,
+    draw=orange!85!black,
+    fill=orange!10,
+    line width=1pt,
+    align=center,
+    minimum width=5.2cm,
+    minimum height=1.05cm
+] at (2.95,2.55)
+{
+    \(\displaystyle
+    \min_{g_A,g_B}\|\widetilde g-g\|_F^2
+    \)
+};
+
+\node[align=left, text=mutedgray, font=\small] at (1.6,-3.0) {
+    \textcolor{titleblue}{solid blue}: full fine-tuning gradient\\
+    \textcolor{mutedgray}{dashed gray}: standard LoRA equivalent gradient\\
+    \textcolor{orange!85!black}{orange}: LoRA-Pro corrected gradient
+};
+
+\end{tikzpicture}
+\end{center}
+
+{\small
+LoRA induces an equivalent low-rank gradient \(\widetilde g\), which may differ
+from the full gradient \(g\). LoRA-Pro adjusts \(g_A\) and \(g_B\) so that
+\(\widetilde g\) becomes closer to \(g\) in Frobenius norm.
+}
+
 \sectiontitle{5. Method Comparison}
 \begin{center}
 \begin{tabular}{>{\bfseries}p{0.22\linewidth}p{0.66\linewidth}}
@@ -279,9 +363,6 @@ Metrics & accuracy, trainable params, time, memory \\
 \bottomrule
 \end{tabular}
 \end{center}
-
-\sectiontitle{Figure 2. Gradient Mismatch Intuition}
-\figureplaceholder{Placeholder for gradient-space diagram\\true full gradient $g$ vs. equivalent low-rank gradient $\widetilde g$}
 
 \end{column}
 
