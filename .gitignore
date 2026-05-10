@@ -23,3 +23,6 @@ results/*
 *.fls
 *.out
 *.synctex.gz
+*.nav
+*.snm
+*.toc

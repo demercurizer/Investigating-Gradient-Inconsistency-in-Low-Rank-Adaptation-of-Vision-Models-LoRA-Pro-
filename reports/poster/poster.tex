@@ -1,17 +1,217 @@
-\documentclass{article}
+\documentclass[final]{beamer}
 
-\title{LoRA-Pro for Vision Transformers}
-\author{}
-\date{}
+\usepackage[size=a0,orientation=landscape,scale=1.08]{beamerposter}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{ragged2e}
+\usepackage{tikz}
+
+\usetheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{headline}{fg=black,bg=white}
+\setbeamercolor{footline}{fg=black,bg=white}
+
+\definecolor{titleblue}{RGB}{24,74,126}
+\definecolor{rulegray}{RGB}{176,184,194}
+\definecolor{textgray}{RGB}{45,50,58}
+\definecolor{mutedgray}{RGB}{104,112,122}
+\definecolor{panelgray}{RGB}{246,248,250}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+\renewcommand{\arraystretch}{1.18}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\method}[1]{\textbf{#1}}
+\newcommand{\sectiontitle}[1]{%
+  \vspace{0.7em}%
+  {\Large\bfseries\color{titleblue}#1}\par
+  \vspace{0.15em}%
+  {\color{rulegray}\rule{\linewidth}{0.9pt}}\par
+  \vspace{0.35em}%
+}
+\newcommand{\figureplaceholder}[1]{%
+  \begin{center}
+  \begin{tikzpicture}
+    \draw[rulegray, line width=1pt] (0,0) rectangle (0.92\linewidth,4.5);
+    \node[align=center, text=mutedgray] at (0.46\linewidth,2.25) {#1};
+  \end{tikzpicture}
+  \end{center}
+}
 
 \begin{document}
-\maketitle
+\begin{frame}[t]
 
-\section{Overview}
+\begin{center}
+  {\VeryHuge\bfseries\color{titleblue}
+  Investigating Gradient Mismatch in Low-Rank Adaptation of CLIP-ViT}\\[0.35em]
+  {\Large Optimization Course Project. MIPT}\\[0.35em]
+  {\Large Gennady Gotovskii \quad Andrey Gabidulin \quad Leonid Sivachev}\\[0.2em]
+  {\large May 2026}
+\end{center}
 
-\section{Results}
+\vspace{0.9em}
+{\color{rulegray}\rule{\textwidth}{1.2pt}}
+\vspace{0.6em}
 
-\bibliographystyle{plain}
-\bibliography{biblio}
+\begin{columns}[t,totalwidth=\textwidth]
 
+\begin{column}{0.315\textwidth}
+\color{textgray}
+
+\sectiontitle{1. Introduction}
+\justifying
+Large pretrained vision models are expensive to fully fine-tune: gradients and
+optimizer states must be stored for all backbone parameters. Parameter-efficient
+fine-tuning methods reduce this cost by training only a small subset of
+parameters.
+
+LoRA is one of the most practical methods for adapting Transformer models, but
+it can still underperform full fine-tuning. We study whether this gap is partly
+explained by gradient mismatch in low-rank adaptation.
+
+\sectiontitle{2. Problem Statement}
+We consider supervised image classification:
+\[
+  \min_{\Phi} \frac{1}{N}\sum_{i=1}^{N}
+  \ell(f_{\Phi}(x_i), y_i).
+\]
+
+We compare several adaptation strategies for the same pretrained
+CLIP-ViT-B/16 backbone: zero-shot inference, linear probing, LoRA, DoRA and
+LoRA-Pro.
+
+\sectiontitle{3. LoRA Baseline}
+For a pretrained weight matrix $W_0 \in \mathbb{R}^{d \times k}$, LoRA uses
+\[
+  W = W_0 + sBA,\qquad
+  B\in\mathbb{R}^{d\times r},\quad
+  A\in\mathbb{R}^{r\times k},\quad
+  r\ll \min(d,k).
+\]
+
+LoRA freezes $W_0$ and trains only $A$ and $B$. This reduces the number of
+trainable parameters from $dk$ to $r(d+k)$ while preserving the original
+pretrained backbone.
+
+\sectiontitle{Figure 1. Method Landscape}
+\figureplaceholder{Placeholder for method diagram\\Full FT / LoRA / DoRA / LoRA-Pro}
+
+\end{column}
+
+\begin{column}{0.315\textwidth}
+\color{textgray}
+
+\sectiontitle{4. LoRA-Pro: Gradient Mismatch}
+Standard LoRA does not directly follow the full fine-tuning gradient. Gradients
+over $A$ and $B$ induce an equivalent update in the full weight space:
+\[
+  dW = s\,dB\,A + s\,B\,dA.
+\]
+
+Equivalently, low-rank gradients induce
+\[
+  \widetilde g = sB g_A + s g_B A.
+\]
+
+LoRA-Pro corrects these gradients by making the equivalent gradient closer to
+the full fine-tuning gradient:
+\[
+  \min_{g_A,g_B}
+  \left\|
+  sBg_A + sg_BA - g
+  \right\|_F^2.
+\]
+
+\sectiontitle{5. Method Comparison}
+\begin{center}
+\begin{tabular}{>{\bfseries}p{0.26\linewidth}p{0.62\linewidth}}
+\toprule
+Method & Adaptation strategy \\
+\midrule
+Zero-shot & No training; compare image and text embeddings. \\
+Linear probe & Freeze CLIP visual encoder; train classifier head. \\
+LoRA & Train low-rank adapters in attention projections. \\
+DoRA & Separate weight magnitude and direction updates. \\
+LoRA-Pro & Correct low-rank gradients to reduce mismatch. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\sectiontitle{6. Experimental Setup}
+\begin{center}
+\begin{tabular}{>{\bfseries}ll}
+\toprule
+Backbone & CLIP-ViT-B/16 \\
+Checkpoint & \code{openai/clip-vit-base-patch16} \\
+Dataset & EuroSAT first, CIFAR-100 second \\
+Rank & $r=8$ \\
+Target modules & \code{q\_proj}, \code{v\_proj} \\
+Metrics & accuracy, trainable params, time, memory \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\sectiontitle{Figure 2. Gradient Mismatch Intuition}
+\figureplaceholder{Placeholder for gradient-space diagram\\true full gradient $g$ vs. equivalent low-rank gradient $\widetilde g$}
+
+\end{column}
+
+\begin{column}{0.315\textwidth}
+\color{textgray}
+
+\sectiontitle{7. Preliminary Experiments}
+The first experimental goal is a reproducible EuroSAT pipeline. Numbers will be
+filled in after running zero-shot, linear probe and LoRA baselines.
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Method & Dataset & Accuracy & Trainable params \\
+\midrule
+Zero-shot CLIP & EuroSAT & -- & 0 \\
+Linear Probe & EuroSAT & planned & head only \\
+LoRA $r=8$ & EuroSAT & planned & adapter + head \\
+DoRA $r=8$ & EuroSAT & next stage & adapter + magnitude + head \\
+LoRA-Pro $r=8$ & EuroSAT & next stage & adapter + head \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\sectiontitle{8. Expected Results and Next Steps}
+We expect zero-shot CLIP to provide a fast sanity check, linear probing to
+measure the quality of frozen CLIP features, and LoRA to establish the first
+parameter-efficient training baseline.
+
+DoRA and LoRA-Pro are included in the next experimental stage after the LoRA
+baseline is reproducible. The main comparison will focus on accuracy per
+trainable parameter and the gap to full fine-tuning.
+
+\sectiontitle{Figure 3. Results Plot}
+\figureplaceholder{Placeholder for baseline accuracy bar plot\\Zero-shot / Linear Probe / LoRA}
+
+\sectiontitle{9. Publication Plan and Conclusion}
+\begin{itemize}
+  \item May 2026: poster draft and preliminary EuroSAT experiments.
+  \item June 2026: complete LoRA / DoRA / LoRA-Pro comparison.
+  \item July 2026: prepare reproducible technical report.
+  \item August 2026: publish report and code on GitHub or a project page.
+\end{itemize}
+
+This project tests whether gradient mismatch is a practical bottleneck for
+low-rank adaptation of vision foundation models.
+
+\end{column}
+
+\end{columns}
+
+\end{frame}
 \end{document}
