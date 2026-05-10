@@ -107,57 +107,58 @@ pretrained backbone.
 
 \begin{center}
 \begin{tikzpicture}[
-    node distance=1.25cm,
+    node distance=1.85cm,
+    every node/.style={font=\large},
     box/.style={
         rectangle,
         draw=titleblue,
-        line width=1pt,
-        rounded corners=4pt,
+        line width=1.5pt,
+        rounded corners=6pt,
         align=center,
-        minimum width=6.3cm,
-        minimum height=1.25cm,
+        minimum width=9.45cm,
+        minimum height=1.9cm,
         fill=white
     },
     smallbox/.style={
         rectangle,
         draw=rulegray,
-        line width=0.9pt,
-        rounded corners=4pt,
+        line width=1.35pt,
+        rounded corners=6pt,
         align=center,
-        minimum width=5.7cm,
-        minimum height=1.15cm,
+        minimum width=8.55cm,
+        minimum height=1.75cm,
         fill=white
     },
     arrow/.style={
         ->,
-        line width=1pt,
+        line width=1.5pt,
         draw=titleblue
     }
 ]
 
 \node[box] (full) {
     \textbf{Full Fine-Tuning}\\
-    {\small train all backbone weights}
+    train all backbone weights
 };
 
 \node[box, below=of full] (lora) {
     \textbf{LoRA}\\
-    {\small low-rank update $W=W_0+sBA$}
+    low-rank update $W=W_0+sBA$
 };
 
-\node[smallbox, below left=1.25cm and 0.65cm of lora] (dora) {
+\node[smallbox, below left=1.85cm and 0.95cm of lora] (dora) {
     \textbf{DoRA}\\
-    {\small magnitude / direction}
+    magnitude / direction
 };
 
-\node[smallbox, below right=1.25cm and 0.65cm of lora] (lorapro) {
+\node[smallbox, below right=1.85cm and 0.95cm of lora] (lorapro) {
     \textbf{LoRA-Pro}\\
-    {\small gradient correction}
+    gradient correction
 };
 
-\draw[arrow] (full) -- node[right, text=mutedgray] {\small cheaper PEFT} (lora);
-\draw[arrow] (lora) -- node[left, text=mutedgray] {\small parameterization} (dora);
-\draw[arrow] (lora) -- node[right, text=mutedgray] {\small optimization} (lorapro);
+\draw[arrow] (full) -- node[right, text=mutedgray] {cheaper PEFT} (lora);
+\draw[arrow] (lora) -- node[left, text=mutedgray] {parameterization} (dora);
+\draw[arrow] (lora) -- node[right, text=mutedgray] {optimization} (lorapro);
 
 \end{tikzpicture}
 \end{center}
