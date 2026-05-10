@@ -1,27 +1,159 @@
-experiment:
-  name: lora_eurosat_r8
-  seed: 42
-  output_dir: results/lora_eurosat_r8
+\documentclass[a0paper,portrait]{baposter}
 
-model:
-  name: openai/clip-vit-base-patch16
-  method: lora
-  rank: 8
-  alpha: 16
-  dropout: 0.05
-  target_modules:
-    - q_proj
-    - v_proj
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{booktabs}
 
-data:
-  dataset: eurosat
-  image_size: 224
-  batch_size: 64
-  num_workers: 4
+% Colors
+\definecolor{proorange}{RGB}{202,98,28}
+\definecolor{zeroshotgray}{RGB}{120,128,138}
+\definecolor{linearblue}{RGB}{38,115,190}
+\definecolor{lorapurple}{RGB}{126,87,194}
+\definecolor{mutedgray}{RGB}{150,150,150}
+\definecolor{rulegray}{RGB}{200,200,200}
+\definecolor{textgray}{RGB}{80,80,80}
 
-training:
-  epochs: 5
-  lr: 1.0e-4
-  weight_decay: 0.01
-  optimizer: adamw
-  mixed_precision: bf16
+\begin{document}
+
+\begin{poster}{
+  % Poster layout options here
+}
+
+% Other sections omitted for brevity
+
+\sectiontitle{4. LoRA-Pro: Gradient Mismatch}
+If \(g_A=\partial \mathcal{L}/\partial A\) and
+\(g_B=\partial \mathcal{L}/\partial B\), the corresponding first-order update in
+the full weight space can be written as an induced gradient direction
+\[
+  \widetilde g = sB g_A + s g_B A.
+\]
+
+% Other sections omitted for brevity
+
+\sectiontitle{6. Experimental Setup}
+
+\begin{tabular}{ll}
+Metrics & accuracy, trainable params, time, memory, gradient discrepancy \\
+% other rows
+\end{tabular}
+
+% Other sections omitted for brevity
+
+\sectiontitle{7. Preliminary Experiments}
+We ran initial EuroSAT baselines using CLIP-ViT-B/16. Zero-shot CLIP gives a
+sanity-check baseline. A frozen-backbone linear probe measures the quality of
+the pretrained visual representation. Standard LoRA with rank $r=8$ provides
+the first parameter-efficient fine-tuning baseline.
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Method & Dataset & Accuracy & Trainable params \\
+\midrule
+Zero-shot CLIP & EuroSAT & \textbf{49.59\%} & 0 \\
+Linear Probe & EuroSAT & \textbf{93.26\%} & 5.1K \\
+LoRA $r=8$ & EuroSAT & \textbf{97.81\%} & 496.7K \\
+\midrule
+DoRA $r=8$ & EuroSAT & next stage & adapter + magnitude + head \\
+LoRA-Pro $r=8$ & EuroSAT & next stage & adapter + head \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+{\small
+LoRA trains only \(496{,}650\) parameters out of \(150{,}117{,}387\), i.e.
+approximately \(0.33\%\) of the model, while reaching \(97.81\%\) validation
+accuracy on EuroSAT. These results validate the pipeline and establish the
+baseline for the LoRA-Pro comparison.
+}
+
+% Other sections omitted for brevity
+
+\sectiontitle{8. Expected Results and Next Steps}
+The preliminary results confirm that the implementation, dataset loading,
+evaluation protocol and checkpointing pipeline work on GPU. The next stage is
+to compare LoRA against DoRA and LoRA-Pro under the same rank and target-module
+budget.
+
+The main research question is no longer whether LoRA improves over zero-shot
+CLIP, but whether LoRA-Pro improves the optimization dynamics of low-rank
+adaptation by reducing the effective gradient mismatch:
+\[
+  \Delta_{\mathrm{grad}}
+  =
+  \frac{\|\widetilde g - g\|_F}{\|g\|_F}.
+\]
+
+We will report accuracy, trainable parameters, training time, GPU memory and
+gradient discrepancy for LoRA, DoRA and LoRA-Pro.
+
+% Other sections omitted for brevity
+
+\sectiontitle{Figure 3. EuroSAT Baseline Accuracy}
+
+\begin{center}
+\begin{tikzpicture}[
+    x=1cm,
+    y=0.095cm,
+    font=\large,
+    bar/.style={
+        rounded corners=3pt
+    }
+]
+
+% Axes
+\draw[->, line width=1.1pt, draw=mutedgray] (0,0) -- (12.2,0);
+\draw[->, line width=1.1pt, draw=mutedgray] (0,0) -- (0,105);
+
+% Y ticks
+\foreach \y in {0,20,40,60,80,100} {
+    \draw[draw=rulegray, line width=0.7pt] (-0.12,\y) -- (0,\y);
+    \node[left, text=mutedgray, font=\normalsize] at (-0.18,\y) {\y};
+    \draw[draw=rulegray, line width=0.35pt, opacity=0.45] (0,\y) -- (11.5,\y);
+}
+
+% Bars
+\draw[bar, fill=zeroshotgray!70, draw=zeroshotgray] (1.2,0) rectangle (3.0,49.59);
+\draw[bar, fill=linearblue!75, draw=linearblue] (4.8,0) rectangle (6.6,93.26);
+\draw[bar, fill=lorapurple!75, draw=lorapurple] (8.4,0) rectangle (10.2,97.81);
+
+% Labels
+\node[below, align=center, text=textgray, font=\normalsize] at (2.1,-7) {Zero-shot\\CLIP};
+\node[below, align=center, text=textgray, font=\normalsize] at (5.7,-7) {Linear\\Probe};
+\node[below, align=center, text=textgray, font=\normalsize] at (9.3,-7) {LoRA\\$r=8$};
+
+\node[above, text=zeroshotgray!80!black, font=\bfseries] at (2.1,51.5) {49.59\%};
+\node[above, text=linearblue!80!black, font=\bfseries] at (5.7,95.2) {93.26\%};
+\node[above, text=lorapurple!80!black, font=\bfseries] at (9.3,99.5) {97.81\%};
+
+\node[rotate=90, text=mutedgray, font=\normalsize] at (-1.25,52) {Accuracy (\%)};
+
+\end{tikzpicture}
+\end{center}
+
+{\small
+Initial results show that CLIP features are already strong on EuroSAT, while
+LoRA fine-tuning further improves accuracy with less than \(0.4\%\) trainable
+parameters.
+}
+
+% Other sections omitted for brevity
+
+\sectiontitle{9. Publication Plan and Conclusion}
+
+\begin{itemize}
+  \item Mid-May 2026: poster draft and completed EuroSAT baselines.
+  % other items
+\end{itemize}
+
+This project tests whether gradient mismatch is a practical bottleneck for
+low-rank adaptation of vision foundation models. Our preliminary results show
+that the baseline pipeline is reproducible and that LoRA provides a strong
+parameter-efficient starting point for the LoRA-Pro comparison.
+
+% Other content omitted for brevity
+
+\end{poster}
+
+\end{document}
