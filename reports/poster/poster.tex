@@ -174,44 +174,45 @@ is replaced by
     }
 ]
 
-\node[input] (x) {$x$};
+\node[input] (x) at (0,0) {$x$};
 
-\node[frozen, above left=2.2cm and 0.7cm of x] (w0) {
+\node[frozen] (w0) at (-5.6,4.1) {
     \textbf{Frozen}\\[-0.1em]
     pretrained weight\\
     $W_0$
 };
 
-\node[trainable, above right=1.4cm and 1.0cm of x] (A) {
+\node[trainable] (A) at (5.6,2.8) {
     \textbf{Trainable}\\[-0.1em]
     $A \in \mathbb{R}^{r\times k}$
 };
 
-\node[trainable, above=0.65cm of A] (B) {
+\node[trainable] (B) at (5.6,5.35) {
     \textbf{Trainable}\\[-0.1em]
     $B \in \mathbb{R}^{d\times r}$
 };
 
-\node[output, above=1.55cm of $(w0)!0.5!(B)$] (sum) {$+$};
+\node[output] (sum) at (0,7.05) {$+$};
 
-\node[output, above=1.05cm of sum] (h) {
+\node[output] (h) at (0,8.85) {
     $h = W_0x + sBAx$
 };
 
-\draw[arrow] (x) -- node[left, text=mutedgray] {$x$} (w0);
-\draw[arrow] (w0) -- node[left, text=mutedgray] {$W_0x$} (sum);
+\draw[arrow] (x) -- (w0);
+\draw[arrow] (w0) -- node[above left, text=mutedgray, pos=0.55] {$W_0x$} (sum);
 
-\draw[loraarrow] (x) -- node[below right, text=mutedgray] {$x$} (A);
-\draw[loraarrow] (A) -- node[right, text=mutedgray] {$Ax$} (B);
-\draw[loraarrow] (B) -- node[right, text=mutedgray] {$sBAx$} (sum);
+\draw[loraarrow] (x) -- (A);
+\draw[loraarrow] (A) -- node[right, text=mutedgray, pos=0.5] {$Ax$} (B);
+\draw[loraarrow] (B) -- node[above right, text=mutedgray, pos=0.55] {$sBAx$} (sum);
 
 \draw[arrow] (sum) -- (h);
 
-\draw[decorate, decoration={brace, amplitude=5pt}, draw=mutedgray]
-    ($(A.north east)+(0.18,0.08)$) -- ($(A.north west)+(-0.18,0.08)$)
-    node[midway, above=7pt, text=mutedgray] {$r$-dimensional bottleneck};
+\draw[mutedgray, dashed, line width=0.9pt]
+    ($(A.east)+(0.35,0)$) -- ($(B.east)+(0.35,0)$)
+    node[midway, right=0.25cm, align=left, text=mutedgray, font=\normalsize]
+    {$r$-dimensional\\bottleneck};
 
-\node[align=left, text=mutedgray, font=\normalsize] at ($(x)+(0,-1.25)$) {
+\node[align=left, text=mutedgray, font=\normalsize] at (0,-1.45) {
     \textcolor{titleblue}{blue branch}: frozen pretrained projection\\
     \textcolor{orange!85!black}{orange branch}: trainable LoRA adapter
 };
