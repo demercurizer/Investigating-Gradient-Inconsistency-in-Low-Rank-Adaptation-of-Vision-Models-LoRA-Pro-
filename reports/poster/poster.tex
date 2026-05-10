@@ -256,7 +256,7 @@ the full fine-tuning gradient:
 \begin{center}
 \begin{tikzpicture}[
     >=Latex,
-    scale=1.5,
+    scale=2,
     transform shape,
     font=\normalsize,
     vector/.style={
@@ -289,21 +289,21 @@ the full fine-tuning gradient:
 
 \coordinate (o) at (-4.45,-0.35);
 
-\draw[fullgrad] (o) -- ++(3.15,3.25)
+\draw[fullgrad] (o) -- ++(4.10,4.23)
     node[pos=0.76, left, text=titleblue] {$g$};
 
-\draw[loragrad] (o) -- ++(6.45,0.85)
+\draw[loragrad] (o) -- ++(8.39,0.59)
     node[pos=0.84, below, text=mutedgray] {$\widetilde g_{\mathrm{LoRA}}$};
 
-\draw[progr] (o) -- ++(5.25,1.55)
+\draw[progr] (o) -- ++(6.83,2.02)
     node[pos=0.86, above right, text=orange!85!black] {$\widetilde g_{\mathrm{Pro}}$};
 
-\draw[<->, draw=mutedgray, line width=0.85pt]
-    ($(o)+(3.15,3.25)$) -- ($(o)+(6.45,0.85)$)
+\draw[<->, draw=mutedgray, line width=0.45pt]
+    ($(o)+(4.10,4.23)$) -- ($(o)+(8.39,0.59)$)
     node[midway, right, text=mutedgray] {\scriptsize mismatch};
 
-\draw[<->, draw=orange!85!black, line width=0.85pt]
-    ($(o)+(3.15,3.25)$) -- ($(o)+(5.25,1.55)$)
+\draw[<->, draw=orange!85!black, line width=0.45pt]
+    ($(o)+(4.10,4.23)$) -- ($(o)+(6.83,2.02)$)
     node[midway, left, text=orange!85!black] {\scriptsize reduced};
 
 \node[
@@ -315,7 +315,7 @@ the full fine-tuning gradient:
     align=center,
     minimum width=5.2cm,
     minimum height=1.05cm
-] at (2.95,2.55)
+] at (6.0,2.55)
 {
     \(\displaystyle
     \min_{g_A,g_B}\|\widetilde g-g\|_F^2
