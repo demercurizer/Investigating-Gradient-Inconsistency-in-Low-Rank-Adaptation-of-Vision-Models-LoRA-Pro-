@@ -12,7 +12,7 @@
 \usepackage{xcolor}
 \usepackage{ragged2e}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning}
+\usetikzlibrary{arrows.meta,calc,decorations.pathreplacing,positioning}
 
 \usetheme{default}
 \setbeamertemplate{navigation symbols}{}
@@ -116,64 +116,114 @@ is replaced by
   h = W_0x + sBAx.
 \]
 
-\sectiontitle{Figure 1. Method Landscape}
+\sectiontitle{Figure 1. LoRA Adapter Architecture}
 
 \begin{center}
 \begin{tikzpicture}[
-    node distance=1.85cm,
-    every node/.style={font=\large},
-    box/.style={
-        rectangle,
-        draw=titleblue,
-        line width=1.5pt,
-        rounded corners=6pt,
-        align=center,
-        minimum width=9.45cm,
-        minimum height=1.9cm,
-        fill=white
-    },
-    smallbox/.style={
+    >=Latex,
+    font=\large,
+    input/.style={
         rectangle,
         draw=rulegray,
-        line width=1.35pt,
-        rounded corners=6pt,
+        line width=1.1pt,
+        rounded corners=4pt,
+        minimum width=5.0cm,
+        minimum height=0.95cm,
         align=center,
-        minimum width=8.55cm,
-        minimum height=1.75cm,
+        fill=white
+    },
+    frozen/.style={
+        rectangle,
+        draw=titleblue,
+        line width=1.3pt,
+        rounded corners=6pt,
+        minimum width=6.4cm,
+        minimum height=1.9cm,
+        align=center,
+        fill=blue!8
+    },
+    trainable/.style={
+        rectangle,
+        draw=orange!80!black,
+        line width=1.3pt,
+        rounded corners=6pt,
+        minimum width=5.8cm,
+        minimum height=1.45cm,
+        align=center,
+        fill=orange!15
+    },
+    output/.style={
+        rectangle,
+        draw=rulegray,
+        line width=1.1pt,
+        rounded corners=4pt,
+        minimum width=5.2cm,
+        minimum height=0.95cm,
+        align=center,
         fill=white
     },
     arrow/.style={
-        -{Latex[length=5mm,width=3.2mm]},
-        line width=2.8pt
+        ->,
+        line width=1.4pt,
+        draw=titleblue
+    },
+    loraarrow/.style={
+        ->,
+        line width=1.4pt,
+        draw=orange!85!black
     }
 ]
 
-\node[box] (full) {
-    \textbf{Full Fine-Tuning}\\
-    train all backbone weights
+\node[input] (x) {$x$};
+
+\node[frozen, above left=2.2cm and 0.7cm of x] (w0) {
+    \textbf{Frozen}\\[-0.1em]
+    pretrained weight\\
+    $W_0$
 };
 
-\node[box, below=of full] (lora) {
-    \textbf{LoRA}\\
-    low-rank update $W=W_0+sBA$
+\node[trainable, above right=1.4cm and 1.0cm of x] (A) {
+    \textbf{Trainable}\\[-0.1em]
+    $A \in \mathbb{R}^{r\times k}$
 };
 
-\node[smallbox, below left=1.85cm and 0.95cm of lora] (dora) {
-    \textbf{DoRA}\\
-    magnitude / direction
+\node[trainable, above=0.65cm of A] (B) {
+    \textbf{Trainable}\\[-0.1em]
+    $B \in \mathbb{R}^{d\times r}$
 };
 
-\node[smallbox, below right=1.85cm and 0.95cm of lora] (lorapro) {
-    \textbf{LoRA-Pro}\\
-    gradient correction
+\node[output, above=1.55cm of $(w0)!0.5!(B)$] (sum) {$+$};
+
+\node[output, above=1.05cm of sum] (h) {
+    $h = W_0x + sBAx$
 };
 
-\draw[arrow, draw=peftblue] (full) -- node[right, text=peftblue, font=\large\bfseries] {cheaper PEFT} (lora);
-\draw[arrow, draw=doragreen] (lora) -- node[left, text=doragreen, font=\large\bfseries] {parameterization} (dora);
-\draw[arrow, draw=proorange] (lora) -- node[right, text=proorange, font=\large\bfseries] {optimization} (lorapro);
+\draw[arrow] (x) -- node[left, text=mutedgray] {$x$} (w0);
+\draw[arrow] (w0) -- node[left, text=mutedgray] {$W_0x$} (sum);
+
+\draw[loraarrow] (x) -- node[below right, text=mutedgray] {$x$} (A);
+\draw[loraarrow] (A) -- node[right, text=mutedgray] {$Ax$} (B);
+\draw[loraarrow] (B) -- node[right, text=mutedgray] {$sBAx$} (sum);
+
+\draw[arrow] (sum) -- (h);
+
+\draw[decorate, decoration={brace, amplitude=5pt}, draw=mutedgray]
+    ($(A.north east)+(0.18,0.08)$) -- ($(A.north west)+(-0.18,0.08)$)
+    node[midway, above=7pt, text=mutedgray] {$r$-dimensional bottleneck};
+
+\node[align=left, text=mutedgray, font=\normalsize] at ($(x)+(0,-1.25)$) {
+    \textcolor{titleblue}{blue branch}: frozen pretrained projection\\
+    \textcolor{orange!85!black}{orange branch}: trainable LoRA adapter
+};
 
 \end{tikzpicture}
 \end{center}
+
+{\normalsize
+LoRA keeps the pretrained projection frozen and adds a trainable low-rank branch.
+The input is compressed to an $r$-dimensional bottleneck by $A$, expanded by $B$,
+scaled by $s=\alpha/r$, and added to the original projection.
+}
 \end{column}
 
 \begin{column}{0.315\textwidth}
