@@ -265,7 +265,7 @@ the full fine-tuning gradient:
     },
     fullgrad/.style={
         vector,
-        draw=titleblue
+        draw=doragreen
     },
     ga/.style={
         vector,
@@ -314,7 +314,7 @@ the full fine-tuning gradient:
 \fill[mutedgray] (sum) circle (1.5pt);
 
 \draw[fullgrad] (o) -- (g)
-    node[pos=0.63, right, text=titleblue] {$g=\partial\mathcal{L}/\partial W$};
+    node[pos=0.63, right, text=doragreen] {$g=\partial\mathcal{L}/\partial W$};
 
 \draw[mismatch, draw=mutedgray] (sum) -- (g)
     node[pos=0.45, left, text=mutedgray] {\scriptsize mismatch};
@@ -338,7 +338,7 @@ the full fine-tuning gradient:
 };
 
 \node[align=left, text=mutedgray] at (1.5,-4.05) {
-    \textcolor{titleblue}{blue}: full fine-tuning gradient \(g\)\\
+    \textcolor{doragreen}{green}: full fine-tuning gradient \(g\)\\
     \textcolor{titleblue!65!black}{dark blue}: contribution \(sBg_A\)\\
     \textcolor{orange!85!black}{orange}: contribution \(sg_BA\)\\
     \textcolor{mutedgray}{gray dashed}: equivalent gradient \(\widetilde g\)
