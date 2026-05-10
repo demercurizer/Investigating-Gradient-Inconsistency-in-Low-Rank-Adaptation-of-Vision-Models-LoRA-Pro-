@@ -1,6 +1,21 @@
-dataset:
-  name: eurosat
+experiment:
+  name: linear_probe_eurosat
+  seed: 42
+  output_dir: results/linear_probe_eurosat
+
 model:
   name: openai/clip-vit-base-patch16
+  method: linear_probe
+
+data:
+  dataset: eurosat
+  image_size: 224
+  batch_size: 64
+  num_workers: 4
+
 training:
-  mode: linear_probe
+  epochs: 5
+  lr: 1.0e-3
+  weight_decay: 0.01
+  optimizer: adamw
+  mixed_precision: bf16

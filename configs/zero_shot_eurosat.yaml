@@ -1,6 +1,14 @@
-dataset:
-  name: eurosat
+experiment:
+  name: zero_shot_eurosat
+  seed: 42
+  output_dir: results/zero_shot_eurosat
+
 model:
   name: openai/clip-vit-base-patch16
-evaluation:
-  mode: zero_shot
+  method: zero_shot
+
+data:
+  dataset: eurosat
+  image_size: 224
+  batch_size: 128
+  num_workers: 4

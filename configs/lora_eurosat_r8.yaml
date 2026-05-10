@@ -1,7 +1,27 @@
-dataset:
-  name: eurosat
+experiment:
+  name: lora_eurosat_r8
+  seed: 42
+  output_dir: results/lora_eurosat_r8
+
 model:
   name: openai/clip-vit-base-patch16
-method:
-  name: lora
+  method: lora
   rank: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - q_proj
+    - v_proj
+
+data:
+  dataset: eurosat
+  image_size: 224
+  batch_size: 64
+  num_workers: 4
+
+training:
+  epochs: 5
+  lr: 1.0e-4
+  weight_decay: 0.01
+  optimizer: adamw
+  mixed_precision: bf16
